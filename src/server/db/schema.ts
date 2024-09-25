@@ -29,7 +29,7 @@ export const messages = mysqlTable("messages", {
 });
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).primaryKey(),
-  email: text("email").unique(),
+  email: varchar("id", { length: 255 }).unique(),
   emailVerified: timestamp("email_verified"),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: timestamp("updated_at")
@@ -43,8 +43,8 @@ export const accounts = mysqlTable("accounts", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   accountType: text("account_type", { enum: accountTypeEnum }).notNull(),
-  githubId: text("github_id").unique(),
-  googleId: text("google_id").unique(),
+  githubId: varchar("github_id", { length: 255 }).unique(),
+  googleId: varchar("google_id", { length: 255 }).unique(),
   password: text("password"),
   salt: text("salt"),
   createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
@@ -55,7 +55,7 @@ export const accounts = mysqlTable("accounts", {
 
 export const magicLinks = mysqlTable("magic_links", {
   id: int("id").primaryKey().autoincrement(),
-  email: text("email").notNull().unique(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
   token: text("token"),
   tokenExpiresAt: timestamp("token_expires_at").notNull(),
 });

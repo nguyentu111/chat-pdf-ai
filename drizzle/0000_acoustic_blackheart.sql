@@ -2,8 +2,8 @@ CREATE TABLE `accounts` (
 	`id` int AUTO_INCREMENT NOT NULL,
 	`user_id` varchar(255) NOT NULL,
 	`account_type` text NOT NULL,
-	`github_id` text,
-	`google_id` text,
+	`github_id` varchar(255),
+	`google_id` varchar(255),
 	`password` text,
 	`salt` text,
 	`created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
@@ -13,13 +13,32 @@ CREATE TABLE `accounts` (
 	CONSTRAINT `accounts_google_id_unique` UNIQUE(`google_id`)
 );
 --> statement-breakpoint
+CREATE TABLE `chats` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`pdf_name` varchar(256) NOT NULL,
+	`pdf_url` text NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`user_id` varchar(256) NOT NULL,
+	`file_key` text NOT NULL,
+	CONSTRAINT `chats_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
 CREATE TABLE `magic_links` (
 	`id` int AUTO_INCREMENT NOT NULL,
-	`email` text NOT NULL,
+	`email` varchar(255) NOT NULL,
 	`token` text,
 	`token_expires_at` timestamp NOT NULL,
 	CONSTRAINT `magic_links_id` PRIMARY KEY(`id`),
 	CONSTRAINT `magic_links_email_unique` UNIQUE(`email`)
+);
+--> statement-breakpoint
+CREATE TABLE `messages` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`chat_id` int NOT NULL,
+	`content` text NOT NULL,
+	`created_at` timestamp NOT NULL DEFAULT (now()),
+	`role` enum('system','user') NOT NULL,
+	CONSTRAINT `messages_id` PRIMARY KEY(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `profile` (
@@ -52,13 +71,12 @@ CREATE TABLE `sessions` (
 );
 --> statement-breakpoint
 CREATE TABLE `user` (
-	`id` varchar(255) NOT NULL,
-	`email` text,
+	`id` varchar(255),
 	`email_verified` timestamp,
 	`created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
 	`updated_at` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	CONSTRAINT `user_id` PRIMARY KEY(`id`),
-	CONSTRAINT `user_email_unique` UNIQUE(`email`)
+	CONSTRAINT `user_id_unique` UNIQUE(`id`)
 );
 --> statement-breakpoint
 CREATE TABLE `verify_email_tokens` (
@@ -70,8 +88,8 @@ CREATE TABLE `verify_email_tokens` (
 	CONSTRAINT `verify_email_tokens_user_id_unique` UNIQUE(`user_id`)
 );
 --> statement-breakpoint
-DROP TABLE `user_subscriptions`;--> statement-breakpoint
 ALTER TABLE `accounts` ADD CONSTRAINT `accounts_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE `messages` ADD CONSTRAINT `messages_chat_id_chats_id_fk` FOREIGN KEY (`chat_id`) REFERENCES `chats`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `profile` ADD CONSTRAINT `profile_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `reset_tokens` ADD CONSTRAINT `reset_tokens_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE `sessions` ADD CONSTRAINT `sessions_user_id_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE no action ON UPDATE no action;--> statement-breakpoint
