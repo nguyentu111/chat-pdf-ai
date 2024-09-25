@@ -1,6 +1,6 @@
 "use client";
 import { uploadToS3 } from "@/lib/s3";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Inbox, Loader2 } from "lucide-react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 const FileUpload = () => {
   const router = useRouter();
   const [uploading, setUploading] = React.useState(false);
+  const queryClient = useQueryClient();
+
   const { mutate, isLoading } = useMutation({
     mutationFn: async ({
       file_key,
@@ -52,6 +54,7 @@ const FileUpload = () => {
         mutate(data, {
           onSuccess: ({ chat_id }) => {
             toast.success("Chat created!");
+            queryClient.invalidateQueries({ queryKey: ["chats"] });
             router.push(`/chat/${chat_id}`);
           },
           onError: (err) => {

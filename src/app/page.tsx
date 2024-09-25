@@ -1,32 +1,36 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, LogIn } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
-import { db } from "@/server/db";
-import {
-  chats,
-  DrizzleChat,
-  profiles,
-  ProfileSchema,
-} from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+
 import ClientOnly from "@/components/ClientOnly";
-import { auth } from "@/lib/auth";
+
 import { UserButton } from "@/components/user-button";
-export const dynamic = "force-dynamic";
-export default async function Home() {
-  const { user, session } = await auth();
-
-  let firstChat: DrizzleChat | undefined, profile: ProfileSchema | undefined;
-  if (user) {
-    firstChat = await db.query.chats.findFirst({
-      where: eq(chats.userId, user.id),
-    });
-    profile = await db.query.profiles.findFirst({
-      where: eq(profiles.userId, user.id),
-    });
-  }
-
+import { useAuth } from "@/components/auth-provider";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { DrizzleChat, ProfileSchema } from "@/server/db/schema";
+export default function Home() {
+  const { user, session } = useAuth();
+  const { data: profile } = useQuery<ProfileSchema>({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/profile");
+      console.log("profile data", data);
+      return data;
+    },
+  });
+  const { data: chats } = useQuery<DrizzleChat[]>({
+    queryKey: ["chats"],
+    queryFn: async () => {
+      console.log("calling chats");
+      const { data } = await axios.get("/api/chats");
+      return data;
+    },
+  });
+  const firstChat = chats?.[0];
+  console.log({ user, session, chats, profile });
   return (
     <div className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

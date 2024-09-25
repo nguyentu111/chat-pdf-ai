@@ -20,7 +20,6 @@ const ChatSideBar = ({ chatId }: Props) => {
     onError: (error) => {
       console.log(error);
     },
-    cacheTime: 0,
   });
   return (
     <div className="w-full  h-full soff p-4 text-gray-200 bg-gray-900">
