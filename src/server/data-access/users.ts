@@ -37,9 +37,10 @@ async function hashPassword(plainTextPassword: string, salt: string) {
 }
 
 export async function createUser(email: string) {
-  const inserted = await db.insert(users).values({ email }).$returningId();
+  const id = crypto.randomUUID();
+  await db.insert(users).values({ id, email });
   return await db.query.users.findFirst({
-    where: eq(users.id, inserted[0].id),
+    where: eq(users.id, id),
   });
 }
 
