@@ -28,12 +28,14 @@ export const messages = mysqlTable("messages", {
   role: mysqlEnum("role", ["system", "user"]).notNull(),
 });
 export const users = mysqlTable("user", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  email: varchar("id", { length: 255 }).unique(),
+  id: varchar("id", { length: 255 })
+    .primaryKey()
+    .$defaultFn(() => sql`uuid()`),
+  email: varchar("email", { length: 255 }).unique(),
   emailVerified: timestamp("email_verified"),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at").$default(() => sql`CURRENT_TIMESTAMP`),
   updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+    .$default(() => sql`CURRENT_TIMESTAMP`)
     .onUpdateNow(),
 });
 export const accountTypeEnum = ["email", "google", "github"] as const;
@@ -47,9 +49,9 @@ export const accounts = mysqlTable("accounts", {
   googleId: varchar("google_id", { length: 255 }).unique(),
   password: text("password"),
   salt: text("salt"),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at").$default(() => sql`CURRENT_TIMESTAMP`),
   updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+    .$default(() => sql`CURRENT_TIMESTAMP`)
     .onUpdateNow(),
 });
 
@@ -90,9 +92,9 @@ export const profiles = mysqlTable("profile", {
   imageId: text("image_id"),
   image: text("image"),
   bio: text("bio").notNull().default(""),
-  createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+  createdAt: timestamp("created_at").$default(() => sql`CURRENT_TIMESTAMP`),
   updatedAt: timestamp("updated_at")
-    .default(sql`CURRENT_TIMESTAMP`)
+    .$default(() => sql`CURRENT_TIMESTAMP`)
     .onUpdateNow(),
 });
 

@@ -71,6 +71,7 @@ export async function createGoogleUserUseCase(googleUser: GoogleUser) {
 
   if (!existingUser) {
     existingUser = await createUser(googleUser.email);
+    console.log({ existingUser });
   }
 
   await createAccountViaGoogle(existingUser!.id, googleUser.sub);

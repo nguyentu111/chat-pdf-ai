@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "21ab922a-5eb1-4fd7-8a3c-4756644bddd8",
+  "id": "04aa57d0-756c-41ce-a32d-4fd0a3159ee3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "accounts": {
@@ -61,8 +61,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -70,8 +69,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "onUpdate": true,
-          "default": "CURRENT_TIMESTAMP"
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -340,8 +338,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -349,8 +346,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "onUpdate": true,
-          "default": "CURRENT_TIMESTAMP"
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -509,6 +505,13 @@
           "name": "id",
           "type": "varchar(255)",
           "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
@@ -524,8 +527,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
+          "autoincrement": false
         },
         "updated_at": {
           "name": "updated_at",
@@ -533,8 +535,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "onUpdate": true,
-          "default": "CURRENT_TIMESTAMP"
+          "onUpdate": true
         }
       },
       "indexes": {},
@@ -548,10 +549,10 @@
         }
       },
       "uniqueConstraints": {
-        "user_id_unique": {
-          "name": "user_id_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "columns": [
-            "id"
+            "email"
           ]
         }
       }
