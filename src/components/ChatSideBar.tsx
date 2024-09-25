@@ -5,13 +5,23 @@ import React from "react";
 import { Button } from "./ui/button";
 import { MessageCircle, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-type Props = {
-  chats: DrizzleChat[];
-  chatId: number;
-};
+type Props = { chatId: number };
 
-const ChatSideBar = ({ chats, chatId }: Props) => {
+const ChatSideBar = ({ chatId }: Props) => {
+  const { data } = useQuery<DrizzleChat[]>({
+    queryKey: ["chats"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/chats");
+      return data;
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+    cacheTime: 0,
+  });
   return (
     <div className="w-full  h-full soff p-4 text-gray-200 bg-gray-900">
       <Link href="/">
@@ -22,7 +32,7 @@ const ChatSideBar = ({ chats, chatId }: Props) => {
       </Link>
 
       <div className="flex max-h-screen overflow-auto pb-20 flex-col gap-2 mt-4">
-        {chats.map((chat) => (
+        {data?.map((chat) => (
           <Link key={chat.id} href={`/chat/${chat.id}`}>
             <div
               className={cn("rounded-lg p-3 text-slate-300 flex items-center", {

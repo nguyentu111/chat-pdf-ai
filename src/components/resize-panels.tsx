@@ -56,7 +56,7 @@ export const ResizePanels = ({
         defaultSize={tab1DFS}
         onResize={(size) => handleResize(1, size)}
       >
-        {currentChat && <ChatSideBar chats={chats} chatId={currentChat.id} />}
+        {currentChat && <ChatSideBar chatId={currentChat.id} />}
       </ResizablePanel>
       <ResizableHandle withHandle className="" />
       <ResizablePanel defaultSize={50} className=" relative oveflow-scroll ">

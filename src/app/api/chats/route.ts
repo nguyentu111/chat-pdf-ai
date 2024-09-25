@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const userChats = db.query.chats.findMany({
+  const userChats = await db.query.chats.findMany({
     where: eq(chats.userId, user.id),
   });
   return NextResponse.json(userChats, { status: 200 });
