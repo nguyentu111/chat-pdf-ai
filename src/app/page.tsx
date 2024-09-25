@@ -1,36 +1,48 @@
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowRight, LogIn } from "lucide-react";
 import FileUpload from "@/components/FileUpload";
-import { db } from "@/lib/db";
-import { chats } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import {
+  chats,
+  DrizzleChat,
+  profiles,
+  ProfileSchema,
+} from "@/server/db/schema";
 import { eq } from "drizzle-orm";
-import { auth } from "@clerk/nextjs/server";
 import ClientOnly from "@/components/ClientOnly";
-
+import { auth } from "@/lib/auth";
+import { UserButton } from "@/components/user-button";
 export const dynamic = "force-dynamic";
 export default async function Home() {
-  const { userId } = auth();
-  const isAuth = !!userId;
-  let firstChat;
-  if (userId) {
-    firstChat = await db.select().from(chats).where(eq(chats.userId, userId));
-    if (firstChat) {
-      firstChat = firstChat[0];
-    }
+  const { user, session } = await auth();
+
+  let firstChat: DrizzleChat | undefined, profile: ProfileSchema | undefined;
+  if (user) {
+    firstChat = await db.query.chats.findFirst({
+      where: eq(chats.userId, user.id),
+    });
+    profile = await db.query.profiles.findFirst({
+      where: eq(profiles.userId, user.id),
+    });
   }
+
   return (
     <div className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center">
             <h1 className="mr-3 text-5xl font-semibold">Chat with any PDF</h1>
-            <UserButton />
+            {user && (
+              <UserButton
+                imgUrl={profile?.image!}
+                name={profile?.displayName!}
+              />
+            )}
           </div>
 
           <div className="flex mt-2">
-            {isAuth && firstChat && (
+            {user && firstChat && (
               <>
                 <Link href={`/chat/${firstChat.id}`}>
                   <Button>
@@ -47,7 +59,7 @@ export default async function Home() {
           </p>
 
           <div className="w-full mt-4">
-            {isAuth ? (
+            {user ? (
               <ClientOnly>
                 <FileUpload />
               </ClientOnly>

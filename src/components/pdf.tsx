@@ -14,7 +14,7 @@ export const PDF = ({ url }: { url: string }) => {
   const { Toolbar } = toolbarPluginInstance;
 
   return (
-    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+    <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
       <div
         className="rpv-core__viewer"
         style={{

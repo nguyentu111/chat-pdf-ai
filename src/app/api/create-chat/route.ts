@@ -1,20 +1,20 @@
-import { db } from "@/lib/db";
-import { chats } from "@/lib/db/schema";
+import { db } from "@/server/db";
+import { chats } from "@/server/db/schema";
 import { loadS3IntoPinecone } from "@/lib/pinecone";
 import { getS3Url } from "@/lib/s3";
-import { auth } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 
 // /api/create-chat
 export async function POST(req: Request, res: Response) {
-  const { userId } = auth();
-  if (!userId) {
+  const { user } = await auth();
+  if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   try {
     const existingChats = await db.query.chats.findMany({
-      where: eq(chats.userId, userId),
+      where: eq(chats.userId, user.id),
     });
     if (existingChats.length >= 10)
       return NextResponse.json(
@@ -29,7 +29,7 @@ export async function POST(req: Request, res: Response) {
       fileKey: file_key,
       pdfName: file_name,
       pdfUrl: getS3Url(file_key),
-      userId,
+      userId: user.id,
     });
 
     chat_id.insertId;

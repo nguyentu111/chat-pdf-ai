@@ -5,7 +5,7 @@ dotenv.config({ path: ".env" });
 export default {
   out: "drizzle",
   dialect: "mysql",
-  schema: "./src/lib/db/schema.ts",
+  schema: "./src/server/db/schema.ts",
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },

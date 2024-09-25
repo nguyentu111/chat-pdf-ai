@@ -1,6 +1,11 @@
 import { S3 } from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
+/**
+ *
+ * @param file_key
+ * @returns
+ */
 export async function downloadFromS3(file_key: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {
@@ -19,7 +24,8 @@ export async function downloadFromS3(file_key: string): Promise<string> {
       const obj = await s3.getObject(params);
       let tempraryImageDirectory: string;
       if (process.env.NODE_ENV === "development") {
-        tempraryImageDirectory = path.join(__dirname, `../../tmp/`);
+        tempraryImageDirectory = path.join(__dirname, `../../../../../tmp/`);
+        // tempraryImageDirectory = path.join("/", `tmp/`);
       } else {
         tempraryImageDirectory = "/tmp/";
       }
